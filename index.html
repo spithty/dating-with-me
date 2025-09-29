@@ -1,269 +1,268 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3e%3cdefs%3e%3cradialGradient id='sun' cx='50%25' cy='50%25'%3e%3cstop offset='0%25' stop-color='%23FFD700'/%3e%3cstop offset='70%25' stop-color='%23FFA500'/%3e%3cstop offset='100%25' stop-color='%23FF8C00'/%3e%3c/radialGradient%3e%3clinearGradient id='petal' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3e%3cstop offset='0%25' stop-color='%2300B4D8'/%3e%3cstop offset='100%25' stop-color='%2390E0EF'/%3e%3c/linearGradient%3e%3c/defs%3e%3c!-- Petals --%3e%3cellipse cx='16' cy='6' rx='3' ry='8' fill='url(%23petal)' transform='rotate(0 16 16)'/%3e%3cellipse cx='16' cy='6' rx='3' ry='8' fill='url(%23petal)' transform='rotate(45 16 16)'/%3e%3cellipse cx='16' cy='6' rx='3' ry='8' fill='url(%23petal)' transform='rotate(90 16 16)'/%3e%3cellipse cx='16' cy='6' rx='3' ry='8' fill='url(%23petal)' transform='rotate(135 16 16)'/%3e%3cellipse cx='16' cy='6' rx='3' ry='8' fill='url(%23petal)' transform='rotate(180 16 16)'/%3e%3cellipse cx='16' cy='6' rx='3' ry='8' fill='url(%23petal)' transform='rotate(225 16 16)'/%3e%3cellipse cx='16' cy='6' rx='3' ry='8' fill='url(%23petal)' transform='rotate(270 16 16)'/%3e%3cellipse cx='16' cy='6' rx='3' ry='8' fill='url(%23petal)' transform='rotate(315 16 16)'/%3e%3c!-- Center --%3e%3ccircle cx='16' cy='16' r='5' fill='url(%23sun)'/%3e%3ccircle cx='16' cy='16' r='3' fill='%23FFD700'/%3e%3c/svg%3e">
-    <title>Lịch trình đi chơi của chúng ta 💕</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap');
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Nunito', sans-serif;
-            background: linear-gradient(135deg, #ffffff 0%, #e0f7ff 50%, #b3e0ff 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 25px;
-            box-shadow: 0 20px 40px rgba(0, 180, 216, 0.15);
-            overflow: hidden;
-            backdrop-filter: blur(10px);
-        }
-        
-        .header {
-            background: linear-gradient(135deg, #00b4d8, #90e0ef);
-            padding: 30px 20px;
-            text-align: center;
-            color: white;
-            position: relative;
-        }
-        
-        .header::before {
-            content: '🌸✨🎬✨🌸';
-            position: absolute;
-            top: 5px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 20px;
-            opacity: 0.7;
-        }
-        
-        .header h1 {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 10px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .header p {
-            font-size: 16px;
-            opacity: 0.9;
-        }
-        
-        .content {
-            padding: 30px;
-        }
-        
-        .schedule-item {
-            background: linear-gradient(135deg, #ffffff, #f0f9ff);
-            border: 2px solid #b3e0ff;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .schedule-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 180, 216, 0.2);
-        }
-        
-        .schedule-item h3 {
-            color: #0077b6;
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .movie-options {
-            display: grid;
-            gap: 15px;
-            margin: 20px 0;
-        }
-        
-        .movie-card {
-            background: linear-gradient(135deg, #ffffff, #e0f7ff);
-            border: 2px solid #b3e0ff;
-            border-radius: 12px;
-            padding: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .movie-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 180, 216, 0.1), transparent);
-            transition: left 0.5s ease;
-        }
-        
-        .movie-card:hover::before {
-            left: 100%;
-        }
-        
-        .movie-card:hover {
-            transform: scale(1.02);
-            border-color: #00b4d8;
-            box-shadow: 0 8px 20px rgba(0, 180, 216, 0.25);
-        }
-        
-        .movie-card.selected {
-            background: linear-gradient(135deg, #00b4d8, #90e0ef);
-            color: white;
-            border-color: #0077b6;
-            transform: scale(1.02);
-        }
-        
-        .movie-title {
-            font-weight: 600;
-            font-size: 16px;
-            margin-bottom: 8px;
-        }
-        
-        .movie-info {
-            font-size: 14px;
-            opacity: 0.8;
-            line-height: 1.4;
-        }
-        
-        .movie-card.selected .movie-info {
-            opacity: 0.9;
-        }
-        
-        .submit-btn {
-            background: linear-gradient(135deg, #00b4d8, #0077b6);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 25px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 100%;
-            margin-top: 20px;
-            box-shadow: 0 5px 15px rgba(0, 180, 216, 0.3);
-        }
-        
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 180, 216, 0.4);
-        }
-        
-        .submit-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .cute-emoji {
-            display: inline-block;
-            animation: bounce 2s infinite;
-        }
-        
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {
-                transform: translateY(0);
-            }
-            40% {
-                transform: translateY(-5px);
-            }
-            60% {
-                transform: translateY(-3px);
-            }
-        }
-        
-        .success-message {
-            background: linear-gradient(135deg, #90e0ef, #b3e0ff);
-            color: #0077b6;
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            font-weight: 600;
-            margin-top: 20px;
-            display: none;
-            border: 2px solid #00b4d8;
-        }
-        
-        .nicknames {
-            font-size: 14px;
-            opacity: 0.8;
-            margin-top: 10px;
-            font-style: italic;
-        }
-        
-        .music-controls {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.9);
-            border: 2px solid #b3e0ff;
-            border-radius: 50px;
-            padding: 10px 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 5px 15px rgba(0, 180, 216, 0.2);
-            z-index: 1000;
-        }
-        
-        .music-btn {
-            background: linear-gradient(135deg, #00b4d8, #90e0ef);
-            color: white;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .music-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 5px 15px rgba(0, 180, 216, 0.3);
-        }
-        
-        .music-info {
-            font-size: 12px;
-            color: #0077b6;
-            font-weight: 600;
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        
-        .playing {
-            animation: pulse 2s infinite;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lịch trình đi chơi của chúng ta 💕</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: linear-gradient(135deg, #fff0f6 0%, #f8e1f4 50%, #f6d1e9 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.96);
+      border-radius: 25px;
+      box-shadow: 0 20px 40px rgba(180, 82, 160, 0.15);
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+
+    .header {
+      background: linear-gradient(135deg, #a855f7, #ec4899);
+      padding: 30px 20px;
+      text-align: center;
+      color: white;
+      position: relative;
+    }
+
+    .header::before {
+      content: '🌸✨🎬✨🌸';
+      position: absolute;
+      top: 5px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 20px;
+      opacity: 0.7;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .header p {
+      font-size: 16px;
+      opacity: 0.9;
+    }
+
+    .content {
+      padding: 30px;
+    }
+
+    .schedule-item {
+      background: linear-gradient(135deg, #ffffff, #fdf2f8);
+      border: 2px solid #fbcfe8;
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .schedule-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(190, 24, 93, 0.2);
+    }
+
+    .schedule-item h3 {
+      color: #a21caf;
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .movie-options {
+      display: grid;
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    .movie-card {
+      background: linear-gradient(135deg, #ffffff, #fce7f3);
+      border: 2px solid #fbcfe8;
+      border-radius: 12px;
+      padding: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .movie-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(236, 72, 153, 0.15), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .movie-card:hover::before {
+      left: 100%;
+    }
+
+    .movie-card:hover {
+      transform: scale(1.02);
+      border-color: #ec4899;
+      box-shadow: 0 8px 20px rgba(236, 72, 153, 0.25);
+    }
+
+    .movie-card.selected {
+      background: linear-gradient(135deg, #a855f7, #ec4899);
+      color: white;
+      border-color: #86198f;
+      transform: scale(1.02);
+    }
+
+    .movie-title {
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    .movie-info {
+      font-size: 14px;
+      opacity: 0.8;
+      line-height: 1.4;
+    }
+
+    .movie-card.selected .movie-info {
+      opacity: 0.9;
+    }
+
+    .submit-btn {
+      background: linear-gradient(135deg, #a855f7, #ec4899);
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 25px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
+      margin-top: 20px;
+      box-shadow: 0 5px 15px rgba(190, 24, 93, 0.3);
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(190, 24, 93, 0.4);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .cute-emoji {
+      display: inline-block;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-5px);
+      }
+      60% {
+        transform: translateY(-3px);
+      }
+    }
+
+    .success-message {
+      background: linear-gradient(135deg, #fbcfe8, #e9d5ff);
+      color: #86198f;
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+      font-weight: 600;
+      margin-top: 20px;
+      display: none;
+      border: 2px solid #ec4899;
+    }
+
+    .nicknames {
+      font-size: 14px;
+      opacity: 0.8;
+      margin-top: 10px;
+      font-style: italic;
+    }
+
+    .music-controls {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 2px solid #fbcfe8;
+      border-radius: 50px;
+      padding: 10px 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 5px 15px rgba(190, 24, 93, 0.2);
+      z-index: 1000;
+    }
+
+    .music-btn {
+      background: linear-gradient(135deg, #a855f7, #ec4899);
+      color: white;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .music-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 5px 15px rgba(190, 24, 93, 0.3);
+    }
+
+    .music-info {
+      font-size: 12px;
+      color: #a21caf;
+      font-weight: 600;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .playing {
+      animation: pulse 2s infinite;
+    }
+  </style>
 </head>
 <body>
     <!-- Music Controls -->
@@ -283,15 +282,15 @@
     <div class="container">
         <div class="header">
             <h1>Lịch trình đi chơi của chúng ta <span class="cute-emoji">💕</span></h1>
-            <p>Hãy chọn phim em pé muốn xem nhé!</p>
+            <p>Hãy chọn phim em muốn xem nhé!</p>
             <div class="nicknames">
-                Dành cho dân chơi aka em pé aka sóc nhỏ aka kf của toi <span class="cute-emoji">🐿️</span>
+                Dành cho dân chơi aka em bé aka em nhỏ aka kf của toi <span class="cute-emoji">🐿️</span>
             </div>
         </div>
         
         <div class="content">
             <div class="schedule-item">
-                <h3><span class="cute-emoji">🏠</span> 17h30: Có mặt tại nhà em pé</h3>
+                <h3><span class="cute-emoji">🏠</span> 18h30: Có mặt tại nhà em pé</h3>
                 <p style="color: #666; margin-left: 35px;">Đúng giờ nhé, đừng để em pé đợi! <span class="cute-emoji">⏰</span></p>
             </div>
             
@@ -337,9 +336,9 @@
             </button>
             
             <div class="success-message" id="successMessage">
-                <span class="cute-emoji">🎉</span> Email đã tự động gửi từ zjnlxag9@gmail.com đến zjn0907@gmail.com thành công! <span class="cute-emoji">💕</span>
+                <span class="cute-emoji">🎉</span> Email đã tự động gửi từ hytaty@gmail.com đến huynhtranty@gmail.com thành công! <span class="cute-emoji">💕</span>
                 <div style="font-size: 12px; margin-top: 10px; opacity: 0.8;">
-                    📧 Kiểm tra hộp thư đến của zjn0907@gmail.com nhé!
+                    📧 Kiểm tra hộp thư đến của huynhtranty@gmail.com nhé!
                 </div>
             </div>
         </div>
@@ -440,10 +439,10 @@
             const emailData = {
                 access_key: "fa80d9c5-1c4d-4e57-961f-33dc9c3b32e8", // Get free key from web3forms.com
                 subject: "Em pé đã chọn phim rồi! 🎬💕",
-                from_name: "Dân chơi aka em pé aka sóc nhỏ aka kf",
-                from_email: "zjnlxag9@gmail.com",
-                to_email: "zjn0907@gmail.com",
-                message: `Cảm ơn T nhìuuuu! 💕
+                from_name: "Dân chơi aka em pé aka bé nhỏ aka tv",
+                from_email: "hytaty@gmail.com",
+                to_email: "huynhtranty@gmail.com",
+                message: `Cảm ơn Vy nhìuuuu! 💕
 
 Kafea của T đã chọn phim rồi nhé:
 
@@ -452,7 +451,7 @@ Kafea của T đã chọn phim rồi nhé:
 Hẹn gặp T đúng giờ nha! 
 
 ---
-Gửi từ website cute của T làm 😘`
+Gửi từ website cute của Ty làm 😘`
             };
             
             try {
@@ -478,7 +477,7 @@ Gửi từ website cute của T làm 😘`
                 // Fallback to mailto if auto-send fails
                 const subject = encodeURIComponent('Em pé đã chọn phim rồi! 🎬💕');
                 const body = encodeURIComponent(emailData.message);
-                const mailtoLink = `mailto:zjn0907@gmail.com?subject=${subject}&body=${body}`;
+                const mailtoLink = `mailto:huynhtranty@gmail.com?subject=${subject}&body=${body}`;
                 window.location.href = mailtoLink;
                 
                 this.innerHTML = 'Mở email để gửi <span class="cute-emoji">📧</span>';
