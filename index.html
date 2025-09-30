@@ -225,6 +225,24 @@
       backdrop-filter: blur(10px);
       box-shadow: 0 5px 15px rgba(190, 24, 93, 0.2);
       z-index: 1000;
+      cursor: grab;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+    }
+
+    .music-controls:active {
+      cursor: grabbing;
+    }
+
+    .music-controls.dragging {
+      cursor: grabbing;
+      transform: scale(1.05);
+      box-shadow: 0 10px 30px rgba(190, 24, 93, 0.4);
+      background: rgba(255, 255, 255, 0.95);
+      transition: none;
     }
 
     .music-btn {
@@ -349,6 +367,97 @@
         let isPlaying = false;
         const music = document.getElementById('backgroundMusic');
         const musicBtn = document.getElementById('musicBtn');
+        
+        // Dragging variables
+        let isDragging = false;
+        let dragOffset = { x: 0, y: 0 };
+        const musicControls = document.querySelector('.music-controls');
+        
+        // Make music controls draggable
+        function initDragging() {
+            let startX, startY;
+            
+            // Mouse events
+            musicControls.addEventListener('mousedown', startDrag);
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', endDrag);
+            
+            // Touch events
+            musicControls.addEventListener('touchstart', startDragTouch, { passive: false });
+            document.addEventListener('touchmove', dragTouch, { passive: false });
+            document.addEventListener('touchend', endDrag);
+            
+            function startDrag(e) {
+                isDragging = true;
+                musicControls.classList.add('dragging');
+                
+                const rect = musicControls.getBoundingClientRect();
+                dragOffset.x = e.clientX - rect.left;
+                dragOffset.y = e.clientY - rect.top;
+                
+                e.preventDefault();
+            }
+            
+            function startDragTouch(e) {
+                if (e.touches.length === 1) {
+                    const touch = e.touches[0];
+                    isDragging = true;
+                    musicControls.classList.add('dragging');
+                    
+                    const rect = musicControls.getBoundingClientRect();
+                    dragOffset.x = touch.clientX - rect.left;
+                    dragOffset.y = touch.clientY - rect.top;
+                    
+                    e.preventDefault();
+                }
+            }
+            
+            function drag(e) {
+                if (!isDragging) return;
+                
+                moveElement(e.clientX, e.clientY);
+                e.preventDefault();
+            }
+            
+            function dragTouch(e) {
+                if (!isDragging || e.touches.length !== 1) return;
+                
+                const touch = e.touches[0];
+                moveElement(touch.clientX, touch.clientY);
+                e.preventDefault();
+            }
+            
+            function moveElement(clientX, clientY) {
+                const windowWidth = window.innerWidth;
+                const windowHeight = window.innerHeight;
+                const elementWidth = musicControls.offsetWidth;
+                const elementHeight = musicControls.offsetHeight;
+                
+                // Calculate new position
+                let newX = clientX - dragOffset.x;
+                let newY = clientY - dragOffset.y;
+                
+                // Boundary checking
+                newX = Math.max(0, Math.min(newX, windowWidth - elementWidth));
+                newY = Math.max(0, Math.min(newY, windowHeight - elementHeight));
+                
+                // Apply position
+                musicControls.style.left = newX + 'px';
+                musicControls.style.top = newY + 'px';
+                musicControls.style.right = 'auto';
+                musicControls.style.bottom = 'auto';
+            }
+            
+            function endDrag() {
+                if (isDragging) {
+                    isDragging = false;
+                    musicControls.classList.remove('dragging');
+                }
+            }
+        }
+        
+        // Initialize dragging when page loads
+        document.addEventListener('DOMContentLoaded', initDragging);
         
         // Music control
         musicBtn.addEventListener('click', function() {
