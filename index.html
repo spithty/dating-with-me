@@ -375,7 +375,10 @@
         
         // Make music controls draggable
         function initDragging() {
-            let startX, startY;
+            let dragStartTime = 0;
+            let hasMoved = false;
+            let dragThreshold = 5; // pixels
+            let startPos = { x: 0, y: 0 };
             
             // Mouse events
             musicControls.addEventListener('mousedown', startDrag);
@@ -388,43 +391,82 @@
             document.addEventListener('touchend', endDrag);
             
             function startDrag(e) {
-                isDragging = true;
-                musicControls.classList.add('dragging');
+                // Don't start drag if clicking on the music button itself
+                if (e.target.closest('.music-btn')) {
+                    return;
+                }
+                
+                dragStartTime = Date.now();
+                hasMoved = false;
+                startPos.x = e.clientX;
+                startPos.y = e.clientY;
                 
                 const rect = musicControls.getBoundingClientRect();
                 dragOffset.x = e.clientX - rect.left;
                 dragOffset.y = e.clientY - rect.top;
-                
-                e.preventDefault();
             }
             
             function startDragTouch(e) {
                 if (e.touches.length === 1) {
                     const touch = e.touches[0];
-                    isDragging = true;
-                    musicControls.classList.add('dragging');
+                    
+                    // Don't start drag if touching the music button itself
+                    if (e.target.closest('.music-btn')) {
+                        return;
+                    }
+                    
+                    dragStartTime = Date.now();
+                    hasMoved = false;
+                    startPos.x = touch.clientX;
+                    startPos.y = touch.clientY;
                     
                     const rect = musicControls.getBoundingClientRect();
                     dragOffset.x = touch.clientX - rect.left;
                     dragOffset.y = touch.clientY - rect.top;
-                    
-                    e.preventDefault();
                 }
             }
             
             function drag(e) {
-                if (!isDragging) return;
+                if (dragStartTime === 0) return;
                 
-                moveElement(e.clientX, e.clientY);
-                e.preventDefault();
+                const currentX = e.clientX;
+                const currentY = e.clientY;
+                const distance = Math.sqrt(
+                    Math.pow(currentX - startPos.x, 2) + Math.pow(currentY - startPos.y, 2)
+                );
+                
+                if (distance > dragThreshold && !isDragging) {
+                    isDragging = true;
+                    hasMoved = true;
+                    musicControls.classList.add('dragging');
+                }
+                
+                if (isDragging) {
+                    moveElement(currentX, currentY);
+                    e.preventDefault();
+                }
             }
             
             function dragTouch(e) {
-                if (!isDragging || e.touches.length !== 1) return;
+                if (dragStartTime === 0 || e.touches.length !== 1) return;
                 
                 const touch = e.touches[0];
-                moveElement(touch.clientX, touch.clientY);
-                e.preventDefault();
+                const currentX = touch.clientX;
+                const currentY = touch.clientY;
+                const distance = Math.sqrt(
+                    Math.pow(currentX - startPos.x, 2) + Math.pow(currentY - startPos.y, 2)
+                );
+                
+                if (distance > dragThreshold && !isDragging) {
+                    isDragging = true;
+                    hasMoved = true;
+                    musicControls.classList.add('dragging');
+                }
+                
+                if (isDragging) {
+                    moveElement(currentX, currentY);
+                    e.preventDefault();
+                }
             }
             
             function moveElement(clientX, clientY) {
@@ -448,19 +490,41 @@
                 musicControls.style.bottom = 'auto';
             }
             
-            function endDrag() {
+            function endDrag(e) {
                 if (isDragging) {
                     isDragging = false;
                     musicControls.classList.remove('dragging');
+                    
+                    // Prevent click event if we actually dragged
+                    if (hasMoved) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
                 }
+                
+                dragStartTime = 0;
+                hasMoved = false;
             }
         }
         
         // Initialize dragging when page loads
-        document.addEventListener('DOMContentLoaded', initDragging);
+        document.addEventListener('DOMContentLoaded', function() {
+            initDragging();
+            
+            // Initialize music control after DOM is loaded
+            initMusicControl();
+        });
         
         // Music control
-        musicBtn.addEventListener('click', function() {
+        function initMusicControl() {
+            musicBtn.addEventListener('click', function(e) {
+                // Prevent event bubbling to parent elements
+                e.stopPropagation();
+                
+                // Only handle click if we're not in the middle of dragging
+                if (isDragging) {
+                    return;
+                }
             if (isPlaying) {
                 music.pause();
                 musicBtn.innerHTML = '🎵';
@@ -484,6 +548,7 @@
                 });
             }
         });
+        }
         
         function playRomanticAmbiance() {
             // Gentle romantic melody as fallback if file doesn't load
