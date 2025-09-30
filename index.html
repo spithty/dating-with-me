@@ -11,6 +11,15 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      /* Remove mobile tap highlights globally */
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+    }
+
+    /* Additional mobile tap highlight removal */
+    button, input, textarea, select, a, div {
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
     }
 
     body {
@@ -258,11 +267,29 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      /* Remove mobile tap highlights */
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      outline: none;
     }
 
     .music-btn:hover {
       transform: scale(1.1);
       box-shadow: 0 5px 15px rgba(190, 24, 93, 0.3);
+    }
+
+    .music-btn:focus {
+      outline: none;
+    }
+
+    .music-btn:active {
+      outline: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .music-info {
