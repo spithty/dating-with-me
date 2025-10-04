@@ -602,9 +602,87 @@
       25% { transform: translateX(-10px); }
       75% { transform: translateX(10px); }
     }
+
+    /* Modern Message Box */
+    .message-box {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      background: white;
+      border-radius: 20px;
+      padding: 30px 40px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      z-index: 10000;
+      max-width: 400px;
+      text-align: center;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .message-box.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .message-box-content {
+      font-size: 18px;
+      color: #333;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .message-box-button {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 25px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .message-box-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.5);
+    }
+
+    .message-box-button:active {
+      transform: translateY(0);
+    }
+
+    .message-box-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 9999;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .message-box-overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
   </style>
 </head>
 <body>
+    <!-- Message Box Overlay -->
+    <div class="message-box-overlay" id="messageOverlay"></div>
+
+    <!-- Message Box -->
+    <div class="message-box" id="messageBox">
+      <div class="message-box-content" id="messageContent"></div>
+      <button class="message-box-button" id="messageButton">OK</button>
+    </div>
+
     <!-- Music Controls -->
     <div class="music-controls">
         <button class="music-btn" id="musicBtn">🎵</button>
@@ -719,6 +797,30 @@
         let isPlaying = false;
         const music = document.getElementById('backgroundMusic');
         const musicBtn = document.getElementById('musicBtn');
+
+        // Modern Message Box Function
+        function showMessage(message) {
+            const messageBox = document.getElementById('messageBox');
+            const messageOverlay = document.getElementById('messageOverlay');
+            const messageContent = document.getElementById('messageContent');
+            const messageButton = document.getElementById('messageButton');
+
+            messageContent.innerHTML = message;
+            messageOverlay.classList.add('show');
+            messageBox.classList.add('show');
+
+            // Close on button click
+            messageButton.onclick = function() {
+                messageBox.classList.remove('show');
+                messageOverlay.classList.remove('show');
+            };
+
+            // Close on overlay click
+            messageOverlay.onclick = function() {
+                messageBox.classList.remove('show');
+                messageOverlay.classList.remove('show');
+            };
+        }
         
         // Dragging variables
         let isDragging = false;
@@ -968,12 +1070,12 @@
                 if (isCorrect) {
                     this.classList.add('correct');
                     setTimeout(() => {
-                        alert('Đúng rồi! Em giỏi quá! 🎉💕');
+                        showMessage('Đúng rồi! Em giỏi quá! 🎉💕');
                     }, 300);
                 } else {
                     this.classList.add('wrong');
                     setTimeout(() => {
-                        alert('Ơ kìa! Chọn lại đi em! 😄💖');
+                        showMessage('Ơ kìa! Chọn lại đi em! 😄💖');
                         this.classList.remove('wrong');
                     }, 500);
                 }
@@ -983,57 +1085,19 @@
         // Runaway button logic
         const rejectBtn = document.getElementById('rejectBtn');
         const acceptBtn = document.getElementById('acceptBtn');
-        let escapeCount = 0;
-        const maxEscapes = 8;
+        let clickCount = 0;
+        const maxClicks = 10;
 
         function getRandomPosition() {
-            const container = document.querySelector('.container');
-            const containerRect = container.getBoundingClientRect();
             const btnRect = rejectBtn.getBoundingClientRect();
 
-            const maxX = window.innerWidth - btnRect.width - 20;
-            const maxY = window.innerHeight - btnRect.height - 20;
+            const maxX = window.innerWidth - btnRect.width - 40;
+            const maxY = window.innerHeight - btnRect.height - 40;
 
-            const x = Math.random() * maxX;
-            const y = Math.random() * maxY;
+            const x = Math.max(20, Math.random() * maxX);
+            const y = Math.max(20, Math.random() * maxY);
 
             return { x, y };
-        }
-
-        function escapeFromCursor(e) {
-            if (escapeCount >= maxEscapes) {
-                rejectBtn.classList.add('shrinking');
-                setTimeout(() => {
-                    rejectBtn.remove();
-                    alert('Haha! Nút "Không" đã biến mất rồi! 😄💕 Em phải đồng ý thôi!');
-                }, 1500);
-                return;
-            }
-
-            const btnRect = rejectBtn.getBoundingClientRect();
-            const btnCenterX = btnRect.left + btnRect.width / 2;
-            const btnCenterY = btnRect.top + btnRect.height / 2;
-
-            const mouseX = e.clientX;
-            const mouseY = e.clientY;
-
-            const distance = Math.sqrt(
-                Math.pow(mouseX - btnCenterX, 2) +
-                Math.pow(mouseY - btnCenterY, 2)
-            );
-
-            // Trigger escape when cursor is within 100px
-            if (distance < 100) {
-                const pos = getRandomPosition();
-                rejectBtn.style.left = pos.x + 'px';
-                rejectBtn.style.top = pos.y + 'px';
-
-                escapeCount++;
-
-                // Shrink the button gradually
-                const newScale = 1 - (escapeCount * 0.1);
-                rejectBtn.style.transform = `scale(${newScale})`;
-            }
         }
 
         // Initialize reject button position
@@ -1043,16 +1107,37 @@
             rejectBtn.style.top = (btnRect.top) + 'px';
         });
 
-        // Track mouse movement
-        document.addEventListener('mousemove', escapeFromCursor);
+        // Handle reject button click/hover
+        rejectBtn.addEventListener('click', function(e) {
+            e.preventDefault();
 
-        // Touch support for mobile
-        document.addEventListener('touchmove', function(e) {
-            const touch = e.touches[0];
-            escapeFromCursor({
-                clientX: touch.clientX,
-                clientY: touch.clientY
-            });
+            if (clickCount >= maxClicks) {
+                rejectBtn.classList.add('shrinking');
+                setTimeout(() => {
+                    rejectBtn.remove();
+                    showMessage('Haha! Nút "Không" đã biến mất rồi! 😄💕<br>Em phải đồng ý thôi!');
+                }, 1500);
+                return;
+            }
+
+            const pos = getRandomPosition();
+            rejectBtn.style.left = pos.x + 'px';
+            rejectBtn.style.top = pos.y + 'px';
+
+            clickCount++;
+
+            // Shrink the button gradually (10% each click)
+            const newScale = Math.max(0.2, 1 - (clickCount * 0.08));
+            rejectBtn.style.transform = `scale(${newScale})`;
+        });
+
+        // Also move on hover for extra fun
+        rejectBtn.addEventListener('mouseenter', function() {
+            if (clickCount < maxClicks && clickCount > 0) {
+                const pos = getRandomPosition();
+                rejectBtn.style.left = pos.x + 'px';
+                rejectBtn.style.top = pos.y + 'px';
+            }
         });
 
         // Accept button action
@@ -1068,7 +1153,7 @@
             // Celebration effect
             this.innerHTML = '🎊 Yay! 🎊';
             setTimeout(() => {
-                alert(randomMessage);
+                showMessage(randomMessage);
                 this.innerHTML = 'Có! Em muốn lắm! 💕';
             }, 500);
         });
