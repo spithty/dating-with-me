@@ -451,8 +451,7 @@
       cursor: pointer;
       transition: all 0.3s ease;
       box-shadow: 0 6px 18px rgba(239, 68, 68, 0.4);
-      position: fixed;
-      z-index: 999;
+      /* Initially static, will become fixed when escaping */
     }
 
     .reject-btn:hover {
@@ -671,18 +670,87 @@
       opacity: 1;
       pointer-events: auto;
     }
+
+    /* Notification Box */
+    .notification-box {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.7);
+      background: white;
+      padding: 30px 40px;
+      border-radius: 20px;
+      box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+      z-index: 10000;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      max-width: 90%;
+      text-align: center;
+    }
+
+    .notification-box.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+      pointer-events: auto;
+    }
+
+    .notification-box-content {
+      font-size: 18px;
+      color: #333;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .notification-box-btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 25px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .notification-box-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+
+    .notification-box-btn:active {
+      transform: translateY(0);
+    }
+
+    .notification-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 9999;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .notification-overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Shake animation for reject button */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0) scale(0.3); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-10px) scale(0.3); }
+      20%, 40%, 60%, 80% { transform: translateX(10px) scale(0.3); }
+    }
   </style>
 </head>
 <body>
-    <!-- Message Box Overlay -->
-    <div class="message-box-overlay" id="messageOverlay"></div>
-
-    <!-- Message Box -->
-    <div class="message-box" id="messageBox">
-      <div class="message-box-content" id="messageContent"></div>
-      <button class="message-box-button" id="messageButton">OK</button>
-    </div>
-
     <!-- Music Controls -->
     <div class="music-controls">
         <button class="music-btn" id="musicBtn">🎵</button>
@@ -793,34 +861,52 @@
     </div>
     
     <script>
+        // Notification function to replace alert()
+        function showNotification(message) {
+            // Create overlay
+            const overlay = document.createElement('div');
+            overlay.className = 'notification-overlay';
+
+            // Create notification box
+            const notificationBox = document.createElement('div');
+            notificationBox.className = 'notification-box';
+            notificationBox.innerHTML = `
+                <div class="notification-box-content">${message}</div>
+                <button class="notification-box-btn">OK</button>
+            `;
+
+            // Add to DOM
+            document.body.appendChild(overlay);
+            document.body.appendChild(notificationBox);
+
+            // Show with animation
+            setTimeout(() => {
+                overlay.classList.add('show');
+                notificationBox.classList.add('show');
+            }, 10);
+
+            // Close notification on button click
+            const closeBtn = notificationBox.querySelector('.notification-box-btn');
+            closeBtn.addEventListener('click', () => {
+                overlay.classList.remove('show');
+                notificationBox.classList.remove('show');
+
+                setTimeout(() => {
+                    overlay.remove();
+                    notificationBox.remove();
+                }, 300);
+            });
+
+            // Close on overlay click
+            overlay.addEventListener('click', () => {
+                closeBtn.click();
+            });
+        }
+
         let selectedMovie = null;
         let isPlaying = false;
         const music = document.getElementById('backgroundMusic');
         const musicBtn = document.getElementById('musicBtn');
-
-        // Modern Message Box Function
-        function showMessage(message) {
-            const messageBox = document.getElementById('messageBox');
-            const messageOverlay = document.getElementById('messageOverlay');
-            const messageContent = document.getElementById('messageContent');
-            const messageButton = document.getElementById('messageButton');
-
-            messageContent.innerHTML = message;
-            messageOverlay.classList.add('show');
-            messageBox.classList.add('show');
-
-            // Close on button click
-            messageButton.onclick = function() {
-                messageBox.classList.remove('show');
-                messageOverlay.classList.remove('show');
-            };
-
-            // Close on overlay click
-            messageOverlay.onclick = function() {
-                messageBox.classList.remove('show');
-                messageOverlay.classList.remove('show');
-            };
-        }
         
         // Dragging variables
         let isDragging = false;
@@ -1070,93 +1156,245 @@
                 if (isCorrect) {
                     this.classList.add('correct');
                     setTimeout(() => {
-                        showMessage('Đúng rồi! Em giỏi quá! 🎉💕');
+                        showNotification('Đúng rồi! Em giỏi quá! 🎉💕');
                     }, 300);
                 } else {
                     this.classList.add('wrong');
                     setTimeout(() => {
-                        showMessage('Ơ kìa! Chọn lại đi em! 😄💖');
+                        showNotification('Ơ kìa! Chọn lại đi em! 😄💖');
                         this.classList.remove('wrong');
                     }, 500);
                 }
             });
         });
 
-        // Runaway button logic
-        const rejectBtn = document.getElementById('rejectBtn');
-        const acceptBtn = document.getElementById('acceptBtn');
-        let clickCount = 0;
-        const maxClicks = 10;
+        // Runaway button logic with improved flow
+        let rejectBtn = null;
+        let acceptBtn = null;
+        let escapeCount = 0;
+        const maxEscapes = 5; // Giảm số lần chạy trốn để flow mượt hơn
+        let hasEscaped = false;
+
+        // Initialize buttons after DOM is ready
+        function initButtons() {
+            rejectBtn = document.getElementById('rejectBtn');
+            acceptBtn = document.getElementById('acceptBtn');
+
+            console.log('Reject button:', rejectBtn);
+            console.log('Accept button:', acceptBtn);
+
+            if (rejectBtn && acceptBtn) {
+                // No need to init position, button stays in normal flow until first escape
+                setupEventListeners();
+            }
+        }
+
+        // Messages hiển thị khi nút chạy trốn
+        const escapeMessages = [
+            'Đừng mà! 😢',
+            'Không được đâu! 🥺',
+            'Em nghĩ lại đi! 💔',
+            'Đừng chọn "Không" mà! 😭',
+            'Anh buồn lắm! 💔'
+        ];
 
         function getRandomPosition() {
+            if (!rejectBtn) return { x: 100, y: 100 };
+
             const btnRect = rejectBtn.getBoundingClientRect();
 
-            const maxX = window.innerWidth - btnRect.width - 40;
-            const maxY = window.innerHeight - btnRect.height - 40;
+            // For position:fixed, use viewport coordinates (no scroll offset needed)
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
 
-            const x = Math.max(20, Math.random() * maxX);
-            const y = Math.max(20, Math.random() * maxY);
+            // Safe margins
+            const margin = 50;
+            const minX = margin;
+            const maxX = viewportWidth - btnRect.width - margin;
+            const minY = margin;
+            const maxY = viewportHeight - btnRect.height - margin;
+
+            // Ensure we have valid range
+            if (maxX <= minX || maxY <= minY) {
+                console.log('Invalid range, using center');
+                return {
+                    x: viewportWidth / 2 - btnRect.width / 2,
+                    y: viewportHeight / 2 - btnRect.height / 2
+                };
+            }
+
+            // Generate new position away from current button position
+            let x, y;
+            let attempts = 0;
+            do {
+                x = Math.random() * (maxX - minX) + minX;
+                y = Math.random() * (maxY - minY) + minY;
+                attempts++;
+
+                // Make sure new position is at least 150px away from current position
+                const distance = Math.sqrt(Math.pow(x - btnRect.left, 2) + Math.pow(y - btnRect.top, 2));
+                if (distance >= 150) break;
+            } while (attempts < 20);
+
+            console.log('New position:', {
+                x,
+                y,
+                currentPos: { left: btnRect.left, top: btnRect.top },
+                viewport: { width: viewportWidth, height: viewportHeight }
+            });
 
             return { x, y };
         }
 
-        // Initialize reject button position
-        window.addEventListener('DOMContentLoaded', function() {
+        function escapeFromCursor(e) {
+            if (!rejectBtn || hasEscaped) return;
+
             const btnRect = rejectBtn.getBoundingClientRect();
-            rejectBtn.style.left = (btnRect.left) + 'px';
-            rejectBtn.style.top = (btnRect.top) + 'px';
-        });
+            const btnCenterX = btnRect.left + btnRect.width / 2;
+            const btnCenterY = btnRect.top + btnRect.height / 2;
 
-        // Handle reject button click/hover
-        rejectBtn.addEventListener('click', function(e) {
-            e.preventDefault();
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
 
-            if (clickCount >= maxClicks) {
-                rejectBtn.classList.add('shrinking');
-                setTimeout(() => {
-                    rejectBtn.remove();
-                    showMessage('Haha! Nút "Không" đã biến mất rồi! 😄💕<br>Em phải đồng ý thôi!');
-                }, 1500);
-                return;
-            }
+            const distance = Math.sqrt(
+                Math.pow(mouseX - btnCenterX, 2) +
+                Math.pow(mouseY - btnCenterY, 2)
+            );
 
-            const pos = getRandomPosition();
-            rejectBtn.style.left = pos.x + 'px';
-            rejectBtn.style.top = pos.y + 'px';
+            // Trigger escape when cursor is within 120px
+            if (distance < 120 && escapeCount < maxEscapes) {
+                hasEscaped = true;
 
-            clickCount++;
+                // Convert to fixed position on first escape
+                if (escapeCount === 0) {
+                    makeButtonFixed();
+                }
 
-            // Shrink the button gradually (10% each click)
-            const newScale = Math.max(0.2, 1 - (clickCount * 0.08));
-            rejectBtn.style.transform = `scale(${newScale})`;
-        });
+                // Thay đổi text của nút
+                if (escapeCount < escapeMessages.length) {
+                    rejectBtn.innerHTML = escapeMessages[escapeCount];
+                }
 
-        // Also move on hover for extra fun
-        rejectBtn.addEventListener('mouseenter', function() {
-            if (clickCount < maxClicks && clickCount > 0) {
+                // Di chuyển nút đến vị trí mới
                 const pos = getRandomPosition();
-                rejectBtn.style.left = pos.x + 'px';
-                rejectBtn.style.top = pos.y + 'px';
+
+                // Double check position is valid
+                const finalX = Math.max(20, Math.min(pos.x, window.innerWidth - 200));
+                const finalY = Math.max(20, Math.min(pos.y, window.innerHeight - 100));
+
+                rejectBtn.style.left = finalX + 'px';
+                rejectBtn.style.top = finalY + 'px';
+
+                console.log('Button moved to:', { x: finalX, y: finalY });
+
+                escapeCount++;
+
+                // Shrink the button gradually
+                const newScale = 1 - (escapeCount * 0.15);
+                rejectBtn.style.transform = `scale(${Math.max(newScale, 0.3)})`;
+
+                // Cho phép escape lại sau 500ms
+                setTimeout(() => {
+                    hasEscaped = false;
+                }, 500);
+
+                // Khi đã chạy trốn đủ số lần
+                if (escapeCount >= maxEscapes) {
+                    setTimeout(() => {
+                        // Hiệu ứng rung lắc
+                        rejectBtn.style.animation = 'shake 0.5s';
+                        rejectBtn.innerHTML = 'Thôi được rồi! 😌';
+
+                        setTimeout(() => {
+                            // Biến nút "Không" thành nút "Có"
+                            rejectBtn.style.transition = 'all 0.5s ease';
+                            rejectBtn.style.transform = 'scale(1.2)';
+                            rejectBtn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                            rejectBtn.innerHTML = 'Được rồi, em đi! 💕';
+                            rejectBtn.classList.remove('reject-btn');
+                            rejectBtn.classList.add('accept-btn');
+
+                            // Khi click vào nút đã biến đổi
+                            rejectBtn.onclick = function() {
+                                showNotification('Haha! Cuối cùng em cũng đồng ý rồi! 🎉💕');
+                                setTimeout(() => {
+                                    rejectBtn.style.transform = 'scale(0)';
+                                    setTimeout(() => {
+                                        rejectBtn.remove();
+                                        acceptBtn.style.transform = 'scale(1.1)';
+                                        setTimeout(() => {
+                                            acceptBtn.style.transform = 'scale(1)';
+                                        }, 300);
+                                    }, 500);
+                                }, 1000);
+                            };
+                        }, 1000);
+                    }, 300);
+                }
             }
-        });
+        }
 
-        // Accept button action
-        acceptBtn.addEventListener('click', function() {
-            const messages = [
-                'Yay! Em đồng ý rồi! 🎉💕',
-                'Anh biết mà! Em yêu anh nhất! 😘💖',
-                'Tuyệt vời! Hẹn gặp em nhé! 🌟💝',
-                'Em là người tuyệt vời nhất! 💕✨'
-            ];
-            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+        // Convert button to fixed position when it starts escaping
+        function makeButtonFixed() {
+            if (!rejectBtn) return;
 
-            // Celebration effect
-            this.innerHTML = '🎊 Yay! 🎊';
-            setTimeout(() => {
-                showMessage(randomMessage);
-                this.innerHTML = 'Có! Em muốn lắm! 💕';
-            }, 500);
-        });
+            const rect = rejectBtn.getBoundingClientRect();
+
+            // Move button to body to escape parent overflow/z-index issues
+            document.body.appendChild(rejectBtn);
+
+            rejectBtn.style.position = 'fixed';
+            rejectBtn.style.left = rect.left + 'px';
+            rejectBtn.style.top = rect.top + 'px';
+            rejectBtn.style.margin = '0';
+            rejectBtn.style.zIndex = '10000'; // Very high z-index to be on top
+
+            console.log('Button converted to fixed at:', {
+                left: rect.left,
+                top: rect.top
+            });
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Track mouse movement
+            document.addEventListener('mousemove', escapeFromCursor);
+
+            // Touch support for mobile
+            document.addEventListener('touchmove', function(e) {
+                const touch = e.touches[0];
+                escapeFromCursor({
+                    clientX: touch.clientX,
+                    clientY: touch.clientY
+                });
+            });
+
+
+            // Accept button action
+            acceptBtn.addEventListener('click', function() {
+                const messages = [
+                    'Yay! Em đồng ý rồi! 🎉💕',
+                    'Anh biết mà! Em yêu anh nhất! 😘💖',
+                    'Tuyệt vời! Hẹn gặp em nhé! 🌟💝',
+                    'Em là người tuyệt vời nhất! 💕✨'
+                ];
+                const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+
+                // Celebration effect
+                this.innerHTML = '🎊 Yay! 🎊';
+                setTimeout(() => {
+                    showNotification(randomMessage);
+                    this.innerHTML = 'Có! Em muốn lắm! 💕';
+                }, 500);
+            });
+        }
+
+        // Initialize everything when DOM is loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initButtons);
+        } else {
+            initButtons();
+        }
         
         // Handle form submission with Web3Forms
         document.getElementById('submitBtn').addEventListener('click', async function() {
@@ -1209,14 +1447,14 @@ Gửi từ website cute của Ty làm 😘`
                 }
             } catch (error) {
                 console.error('Email sending failed:', error);
-                alert(`Lỗi gửi email: ${error.message}. Sẽ chuyển sang mailto...`);
-                
+                showNotification(`Lỗi gửi email: ${error.message}. Sẽ chuyển sang mailto...`);
+
                 // Fallback to mailto if auto-send fails
                 const subject = encodeURIComponent('Em pé đã chọn phim rồi! 🎬💕');
                 const body = encodeURIComponent(emailData.message);
                 const mailtoLink = `mailto:huynhtranty@gmail.com?subject=${subject}&body=${body}`;
                 window.location.href = mailtoLink;
-                
+
                 this.innerHTML = 'Mở email để gửi <span class="cute-emoji">📧</span>';
                 this.disabled = false;
             }
