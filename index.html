@@ -24,27 +24,83 @@
 
     body {
       font-family: 'Nunito', sans-serif;
-      background: linear-gradient(135deg, #fff0f6 0%, #f8e1f4 50%, #f6d1e9 100%);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
       min-height: 100vh;
       padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Animated background particles */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image:
+        radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+      animation: particleMove 20s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes particleMove {
+      0%, 100% { transform: translate(0, 0); }
+      33% { transform: translate(30px, -30px); }
+      66% { transform: translate(-20px, 20px); }
     }
 
     .container {
       max-width: 600px;
       margin: 0 auto;
-      background: rgba(255, 255, 255, 0.96);
-      border-radius: 25px;
-      box-shadow: 0 20px 40px rgba(180, 82, 160, 0.15);
+      background: rgba(255, 255, 255, 0.98);
+      border-radius: 30px;
+      box-shadow: 0 25px 60px rgba(102, 126, 234, 0.4);
       overflow: hidden;
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(15px);
+      position: relative;
+      z-index: 1;
+      animation: slideInUp 0.8s ease-out;
+    }
+
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .header {
-      background: linear-gradient(135deg, #a855f7, #ec4899);
-      padding: 30px 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 35px 20px;
       text-align: center;
       color: white;
       position: relative;
+      overflow: hidden;
+    }
+
+    .header::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+      animation: headerGlow 8s ease-in-out infinite;
+    }
+
+    @keyframes headerGlow {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(10%, 10%); }
     }
 
     .header::before {
@@ -54,19 +110,24 @@
       left: 50%;
       transform: translateX(-50%);
       font-size: 20px;
-      opacity: 0.7;
+      opacity: 0.8;
+      z-index: 2;
     }
 
     .header h1 {
       font-size: 28px;
       font-weight: 700;
       margin-bottom: 10px;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      text-shadow: 0 3px 10px rgba(0,0,0,0.2);
+      position: relative;
+      z-index: 2;
     }
 
     .header p {
       font-size: 16px;
-      opacity: 0.9;
+      opacity: 0.95;
+      position: relative;
+      z-index: 2;
     }
 
     .content {
@@ -74,27 +135,47 @@
     }
 
     .schedule-item {
-      background: linear-gradient(135deg, #ffffff, #fdf2f8);
-      border: 2px solid #fbcfe8;
-      border-radius: 15px;
-      padding: 20px;
+      background: linear-gradient(135deg, #ffffff, #f3f4ff);
+      border: 2px solid #c7d2fe;
+      border-radius: 18px;
+      padding: 22px;
       margin-bottom: 20px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .schedule-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+      transition: left 0.6s ease;
+    }
+
+    .schedule-item:hover::before {
+      left: 100%;
     }
 
     .schedule-item:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(190, 24, 93, 0.2);
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+      border-color: #818cf8;
     }
 
     .schedule-item h3 {
-      color: #a21caf;
+      color: #5b21b6;
       font-size: 18px;
       font-weight: 600;
       margin-bottom: 15px;
       display: flex;
       align-items: center;
       gap: 10px;
+      position: relative;
+      z-index: 1;
     }
 
     .movie-options {
@@ -104,12 +185,12 @@
     }
 
     .movie-card {
-      background: linear-gradient(135deg, #ffffff, #fce7f3);
-      border: 2px solid #fbcfe8;
-      border-radius: 12px;
-      padding: 15px;
+      background: linear-gradient(135deg, #ffffff, #ede9fe);
+      border: 2px solid #c7d2fe;
+      border-radius: 15px;
+      padding: 18px;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       position: relative;
       overflow: hidden;
     }
@@ -121,8 +202,8 @@
       left: -100%;
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(236, 72, 153, 0.15), transparent);
-      transition: left 0.5s ease;
+      background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.2), transparent);
+      transition: left 0.6s ease;
     }
 
     .movie-card:hover::before {
@@ -130,16 +211,27 @@
     }
 
     .movie-card:hover {
-      transform: scale(1.02);
-      border-color: #ec4899;
-      box-shadow: 0 8px 20px rgba(236, 72, 153, 0.25);
+      transform: scale(1.05) translateY(-3px);
+      border-color: #818cf8;
+      box-shadow: 0 12px 30px rgba(102, 126, 234, 0.35);
+    }
+
+    .movie-card:active {
+      transform: scale(0.98);
+      transition: all 0.1s ease;
     }
 
     .movie-card.selected {
-      background: linear-gradient(135deg, #a855f7, #ec4899);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
-      border-color: #86198f;
-      transform: scale(1.02);
+      border-color: #5b21b6;
+      transform: scale(1.03);
+      animation: selectedPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes selectedPulse {
+      0%, 100% { box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4); }
+      50% { box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6); }
     }
 
     .movie-title {
@@ -159,28 +251,58 @@
     }
 
     .submit-btn {
-      background: linear-gradient(135deg, #a855f7, #ec4899);
+      background: linear-gradient(135deg, #667eea, #764ba2);
       color: white;
       border: none;
-      padding: 15px 30px;
-      border-radius: 25px;
-      font-size: 16px;
-      font-weight: 600;
+      padding: 16px 35px;
+      border-radius: 30px;
+      font-size: 17px;
+      font-weight: 700;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       width: 100%;
       margin-top: 20px;
-      box-shadow: 0 5px 15px rgba(190, 24, 93, 0.3);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .submit-btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s ease, height 0.6s ease;
+    }
+
+    .submit-btn:hover::before {
+      width: 300px;
+      height: 300px;
     }
 
     .submit-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(190, 24, 93, 0.4);
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 12px 35px rgba(102, 126, 234, 0.5);
+    }
+
+    .submit-btn:active {
+      transform: translateY(-1px) scale(0.98);
+      transition: all 0.1s ease;
     }
 
     .submit-btn:disabled {
-      opacity: 0.6;
+      opacity: 0.5;
       cursor: not-allowed;
+      transform: none;
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+    }
+
+    .submit-btn:disabled:hover {
       transform: none;
     }
 
@@ -307,6 +429,178 @@
     .playing {
       animation: pulse 2s infinite;
     }
+
+    /* Runaway button styles */
+    .button-container {
+      display: flex;
+      gap: 15px;
+      margin-top: 25px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .reject-btn {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 30px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 18px rgba(239, 68, 68, 0.4);
+      position: fixed;
+      z-index: 999;
+    }
+
+    .reject-btn:hover {
+      transform: scale(0.95);
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    }
+
+    .reject-btn.shrinking {
+      animation: shrinkAway 1.5s ease-out forwards;
+    }
+
+    @keyframes shrinkAway {
+      0% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      70% {
+        opacity: 0.5;
+        transform: scale(0.3);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(0);
+        display: none;
+      }
+    }
+
+    .accept-btn {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 30px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 6px 18px rgba(16, 185, 129, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .accept-btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s ease, height 0.6s ease;
+    }
+
+    .accept-btn:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    .accept-btn:hover {
+      transform: translateY(-4px) scale(1.08);
+      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.5);
+    }
+
+    .accept-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* Interactive quiz section */
+    .quiz-section {
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      border: 2px solid #fbbf24;
+      border-radius: 18px;
+      padding: 25px;
+      margin-top: 25px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .quiz-section::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+      animation: quizGlow 10s ease-in-out infinite;
+    }
+
+    @keyframes quizGlow {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      50% { transform: translate(-10%, -10%) rotate(180deg); }
+    }
+
+    .quiz-section h3 {
+      color: #92400e;
+      font-size: 19px;
+      font-weight: 700;
+      margin-bottom: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .quiz-option {
+      background: white;
+      border: 2px solid #fbbf24;
+      border-radius: 12px;
+      padding: 12px 18px;
+      margin: 10px 0;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      z-index: 1;
+    }
+
+    .quiz-option:hover {
+      transform: translateX(10px) scale(1.02);
+      background: #fffbeb;
+      border-color: #f59e0b;
+      box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3);
+    }
+
+    .quiz-option.correct {
+      background: linear-gradient(135deg, #86efac, #4ade80);
+      border-color: #16a34a;
+      color: #14532d;
+      font-weight: 600;
+      animation: correctAnswer 0.6s ease;
+    }
+
+    .quiz-option.wrong {
+      background: linear-gradient(135deg, #fca5a5, #f87171);
+      border-color: #dc2626;
+      color: #7f1d1d;
+      animation: shake 0.5s ease;
+    }
+
+    @keyframes correctAnswer {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
   </style>
 </head>
 <body>
@@ -379,11 +673,41 @@
             <button class="submit-btn" id="submitBtn" disabled>
                 Gửi lựa chọn của em pé <span class="cute-emoji">💌</span>
             </button>
-            
+
             <div class="success-message" id="successMessage">
                 <span class="cute-emoji">🎉</span> Email đã tự động gửi từ hytaty@gmail.com đến huynhtranty@gmail.com thành công! <span class="cute-emoji">💕</span>
                 <div style="font-size: 12px; margin-top: 10px; opacity: 0.8;">
                     📧 Kiểm tra hộp thư đến của huynhtranty@gmail.com nhé!
+                </div>
+            </div>
+
+            <!-- Interactive Quiz Section -->
+            <div class="quiz-section" id="quizSection">
+                <h3>🎯 Câu hỏi vui: Em có muốn đi chơi không? 💕</h3>
+                <div class="quiz-option" data-answer="correct">
+                    ✨ Có chứ! Đi liền! 😍
+                </div>
+                <div class="quiz-option" data-answer="correct">
+                    💖 Tất nhiên rồi! Em đang mong chờ lắm!
+                </div>
+                <div class="quiz-option" data-answer="correct">
+                    🌟 Chắc chắn luôn! Let's go! 🚀
+                </div>
+                <div class="quiz-option" data-answer="wrong">
+                    😢 Hôônổng dđi...
+                </div>
+            </div>
+
+            <!-- Yes/No Buttons -->
+            <div class="schedule-item" style="margin-top: 25px; text-align: center;">
+                <h3 style="justify-content: center;">💝 Em có muốn đi xem phim với anh không?</h3>
+                <div class="button-container">
+                    <button class="accept-btn" id="acceptBtn">
+                        Có! Em muốn lắm! 💕
+                    </button>
+                    <button class="reject-btn" id="rejectBtn">
+                        Hôônổng dđi 😢
+                    </button>
                 </div>
             </div>
         </div>
@@ -627,6 +951,125 @@
                 selectedMovie = this.dataset.movie;
                 document.getElementById('submitBtn').disabled = false;
             });
+        });
+
+        // Quiz interaction
+        document.querySelectorAll('.quiz-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const isCorrect = this.dataset.answer === 'correct';
+
+                // Remove previous states
+                document.querySelectorAll('.quiz-option').forEach(opt => {
+                    opt.classList.remove('correct', 'wrong');
+                    opt.style.pointerEvents = 'auto';
+                });
+
+                if (isCorrect) {
+                    this.classList.add('correct');
+                    setTimeout(() => {
+                        alert('Đúng rồi! Em giỏi quá! 🎉💕');
+                    }, 300);
+                } else {
+                    this.classList.add('wrong');
+                    setTimeout(() => {
+                        alert('Ơ kìa! Chọn lại đi em! 😄💖');
+                        this.classList.remove('wrong');
+                    }, 500);
+                }
+            });
+        });
+
+        // Runaway button logic
+        const rejectBtn = document.getElementById('rejectBtn');
+        const acceptBtn = document.getElementById('acceptBtn');
+        let escapeCount = 0;
+        const maxEscapes = 8;
+
+        function getRandomPosition() {
+            const container = document.querySelector('.container');
+            const containerRect = container.getBoundingClientRect();
+            const btnRect = rejectBtn.getBoundingClientRect();
+
+            const maxX = window.innerWidth - btnRect.width - 20;
+            const maxY = window.innerHeight - btnRect.height - 20;
+
+            const x = Math.random() * maxX;
+            const y = Math.random() * maxY;
+
+            return { x, y };
+        }
+
+        function escapeFromCursor(e) {
+            if (escapeCount >= maxEscapes) {
+                rejectBtn.classList.add('shrinking');
+                setTimeout(() => {
+                    rejectBtn.remove();
+                    alert('Haha! Nút "Không" đã biến mất rồi! 😄💕 Em phải đồng ý thôi!');
+                }, 1500);
+                return;
+            }
+
+            const btnRect = rejectBtn.getBoundingClientRect();
+            const btnCenterX = btnRect.left + btnRect.width / 2;
+            const btnCenterY = btnRect.top + btnRect.height / 2;
+
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
+
+            const distance = Math.sqrt(
+                Math.pow(mouseX - btnCenterX, 2) +
+                Math.pow(mouseY - btnCenterY, 2)
+            );
+
+            // Trigger escape when cursor is within 100px
+            if (distance < 100) {
+                const pos = getRandomPosition();
+                rejectBtn.style.left = pos.x + 'px';
+                rejectBtn.style.top = pos.y + 'px';
+
+                escapeCount++;
+
+                // Shrink the button gradually
+                const newScale = 1 - (escapeCount * 0.1);
+                rejectBtn.style.transform = `scale(${newScale})`;
+            }
+        }
+
+        // Initialize reject button position
+        window.addEventListener('DOMContentLoaded', function() {
+            const btnRect = rejectBtn.getBoundingClientRect();
+            rejectBtn.style.left = (btnRect.left) + 'px';
+            rejectBtn.style.top = (btnRect.top) + 'px';
+        });
+
+        // Track mouse movement
+        document.addEventListener('mousemove', escapeFromCursor);
+
+        // Touch support for mobile
+        document.addEventListener('touchmove', function(e) {
+            const touch = e.touches[0];
+            escapeFromCursor({
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+        });
+
+        // Accept button action
+        acceptBtn.addEventListener('click', function() {
+            const messages = [
+                'Yay! Em đồng ý rồi! 🎉💕',
+                'Anh biết mà! Em yêu anh nhất! 😘💖',
+                'Tuyệt vời! Hẹn gặp em nhé! 🌟💝',
+                'Em là người tuyệt vời nhất! 💕✨'
+            ];
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+
+            // Celebration effect
+            this.innerHTML = '🎊 Yay! 🎊';
+            setTimeout(() => {
+                alert(randomMessage);
+                this.innerHTML = 'Có! Em muốn lắm! 💕';
+            }, 500);
         });
         
         // Handle form submission with Web3Forms
